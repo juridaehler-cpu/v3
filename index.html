@@ -9,12 +9,12 @@ body {
     padding: 0; 
     font-family: Arial, sans-serif;
     text-align: center;
-    background: #f4f4f9; /* Standard Hintergrund nach Login */
+    background: #f4f4f9;
 }
 
 /* Wallpaper nur für Login */
 body.login-active {
-    background: url("F5F8ED3D-F090-4910-B284-13037EF00854.png") no-repeat center center fixed;
+    background: url("wallpaperv2") no-repeat center center fixed;
     background-size: cover;
 }
 
@@ -247,17 +247,39 @@ a.donate-btn {
 </div>
 
 <script>
+// Base64-verschlüsselte Passwörter für die Wochentage
+const passwordsBase64 = {
+    0: "ZmFzdGZ1bmd1czY3",        // fastfungus67
+    1: "cmFwZW5pZ2dhODQ=",        // rapenigga84
+    2: "c3VwcG9ydGFkb2xmNDU=",    // supportadolf45
+    3: "Z2F5YnVyZDY5",            // gayburd69
+    4: "dGlja2xlbXl0aXAxNQ==",    // ticklemytip15
+    5: "aWp1Z2dtaW5vcnM2NA==",    // ijuggminors64
+    6: "ZGlobmNoZWVzZTk5"         // dihcheese99
+};
+
+// Verschleiertes Master-Passwort
+const masterPassword = atob("YWRtaW4xOTc1"); // admin1975
+
+function decodeBase64(str) { return atob(str); }
+
+function getDailyPassword() {
+    let day = new Date().getDay(); 
+    day = (day === 0) ? 6 : day - 1; // Montag = 0
+    return decodeBase64(passwordsBase64[day]);
+}
+
 function checkPassword() {
     const input = document.getElementById("password").value;
-    const error = document.getElementById("error");
-    if (input === "ticklemytip15") {
+    const correctPassword = getDailyPassword();
+    if (input === correctPassword || input === masterPassword) {
         document.getElementById("login-box").style.display = "none";
         document.getElementById("main-title").style.display = "none";
         document.getElementById("content").style.display = "block";
-        document.body.classList.remove("login-active"); // Hintergrund + Overlay entfernen
-        error.textContent = "";
+        document.body.classList.remove("login-active");
+        document.getElementById("error").textContent = "";
     } else {
-        error.textContent = "Falsches Passwort!";
+        document.getElementById("error").textContent = "Falsches Passwort!";
     }
 }
 
