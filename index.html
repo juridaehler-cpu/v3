@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<style>
+body { 
+    margin: 0; 
+    padding: 0; 
+    background: #f4f4f9; 
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+/* Haupt-Slogan */
+#main-title {
+    font-size: 26px;
+    font-weight: bold;
+    color: #222;
+    margin-top: 60px;
+    margin-bottom: 20px;
+}
+
+/* Zentrierte Login-Box */
+#login-box {
+    width: 350px;
+    margin: 20px auto 120px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    text-align: center;
+}
+#login-box h2 {
+    margin-bottom: 20px;
+}
+input[type="password"] {
+    width: 90%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+button, a.donate-btn {
+    width: 95%;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-block;
+}
+button {
+    background: #007bff;
+    color: white;
+}
+a.donate-btn {
+    background: #ffc439;
+    color: black;
+    font-weight: bold;
+}
+#error {
+    color: red;
+    margin-top: 10px;
+}
+
+/* Content-Bereich nach Login */
+#content {
+    display: none;
+    padding: 40px;
+}
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+.gallery img {
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Cookie Banner */
+#cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.9);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    display: none;
+    z-index: 1000;
+}
+#cookie-banner button {
+    background: #28a745;
+    color: white;
+    margin-left: 10px;
+    border-radius: 5px;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- Grosser Slogan über dem Login -->
+<div id="main-title">
+    Erhalte Zugriff auf das grösste Meme-Archiv der Schweiz
+</div>
+
+<!-- Login Box -->
+<div id="login-box">
+    <h2>Willkommen</h2>
+    <p>Bitte Passwort eingeben:</p>
+    <input type="password" id="password" placeholder="Passwort">
+    <br>
+    <button onclick="checkPassword()">Login</button>
+    <p id="error"></p>
+
+    <div id="or-text">oder</div>
+    <!-- PayPal-Spenden-Link -->
+    <a href="https://www.paypal.com/paypalme/jxridaehler@gmail.com" class="donate-btn" target="_blank">Spenden</a>
+</div>
+
+<!-- Bilder-Content -->
+<div id="content">
+    <div class="gallery">
+        <img src="vik.jpg" alt="vik">
+        <img src="jp.png" alt="jp">
+        <img src="actrually.webp" alt="actrually">
+        <img src="Quandale-Dingle-8 (1).jpg" alt="Quandale-Dingle">
+        <img src="what-music-do-you-think-i-listen-to-v0-5kxskzrgkv7f1.webp" alt="">
+        <img src="ah.jpeg" alt="ah">
+        <img src="bomba.jpeg" alt="bomba">
+        <img src="cum.jpeg" alt="cum">
+        <img src="luxulub.jpg" alt="luxulub">
+        <img src="sybau.webp" alt="sybau">
+        <img src="huhn.jpeg" alt="huhn">
+        <img src="cam.jpg" alt="cam">
+        <img src="cinema.jpg" alt="cinema">
+        <img src="corndog.jpg" alt="corn">
+        <img src="dihhh.jpg" alt="dihh">
+        <img src="grape.jpg" alt="grape">
+        <img src="grapeme.jpg" alt="me">
+        <img src="massive.jpg" alt="massive">
+        <img src="mouse.jpg" alt="mouse">
+        <img src="nga.jpg" alt="ng">
+        <img src="nihh.jpg" alt="nih">
+        <img src="outr.jpg" alt="outr">
+        <img src="pig.jpg" alt="pig">
+        <img src="reta.jpg" alt="reta">
+        <img src="shhh.jpg" alt="shhh">
+        <img src="soldat.jpg" alt="soldat">
+        <img src="speed.jpg" alt="speed">
+        <img src="uhh.jpg" alt="uh">
+        <img src="wha.jpg" alt="wha">
+        <img src="bibler.jpg" alt="bibler">
+        <img src="dihnih.jpg" alt="dihnih">
+        <img src="esel.jpg" alt="esel">
+        <img src="fibbler.jpg" alt="fibbler">
+        <img src="fubbler.jpg" alt="fubbler">
+        <img src="fungler.jpg" alt="fungler">
+        <img src="nibbler.jpg" alt="nibbler">
+        <img src="nihhh.jpg" alt="nihhh">
+        <img src="rapenibbler.jpg" alt="rapenibbler">
+        <img src="tiger.jpg" alt="tiger">
+        <img src="monanigla.jpg" alt="nigla">
+        <img src="fortnite.jpg" alt="fortnite">
+        <img src="gooner.jpg" alt="gooner">
+        <img src="gubbla.jpg" alt="gubbla">
+        <img src="apfel.jpg" alt="apfel">
+        <img src="zuggler.jpg" alt="zuggler">
+        <img src="ziggler.jpg" alt="ziggler">
+        <img src="zoggler.jpg" alt="zoggler">
+        <img src="zaggler.jpg" alt="zaggler">
+        <img src="nodih.jpg" alt="nodih">
+	<img src="scar.jpg" alt="scar">
+        <img src="egg.jpg" alt="egg">
+	<img src="slime.jpg" alt="slime">
+	<img src="kiwi.jpg" alt="kiwi">
+	<img src="frih.jpg" alt="frih">
+	<img src="bed.jpg" alt="bed">
+	<img src="brochacho.jpg" alt="vro">
+	<img src="patrick.jpg" alt="patrick">
+	<img src="edih.jpg" alt="edih">
+	<img src="apfle.jpg" alt="apfle">
+	<img src="wha!.jpg" alt="wha2">
+	<img src="alien.jpg" alt="alien">
+	<img src="kribbla.jpg" alt="kribbla">
+	<img src="kribbli.jpg" alt="kribbli">
+	<img src="kribblo.jpg" alt="kribblo">
+	<img src="kribble.jpg" alt="kribble">	
+	<img src="woom.jpg" alt="woom">
+	<img src="waam.jpg" alt="waam">
+	<img src="weem.jpg" alt="weem">
+	<img src="wuum.jpg" alt="wuum">
+	<img src="us.jpg" alt="us?">
+	<img src="henry.jpg" alt="henry">
+	<img src="un.jpg" alt="un">
+	<img src=".jpg" alt="">
+	<img src="vro.jpg" alt="vro">
+	<img src="sticks.jpg" alt="sticks">
+	<img src="cry.jpg" alt="cry">
+	<img src="report.jpg" alt="report">
+	<img src="uh.jpg" alt="uh">
+	<img src="cr.jpg" alt="cr">
+	<img src="obv.jpg" alt="obv">
+	<img src="sdg.jpg" alt="sdg">
+	<img src="glonk.jpg" alt="glonk">
+	<img src="haha.jpg" alt="haha">
+	<img src="speedd.jpg" alt="speedd">
+	<img src="molest.jpg" alt="molest">
+	<img src="pfust.jpg" alt="pfust">
+	<img src="ksi.jpg" alt="ksi">
+	<img src="cumjum.jpg" alt="cumjum">
+	<img src="silver.jpg" alt="silver">
+
+	
+	
+	
+	
+	
+
+	
+
+
+       
+        
+    </div>
+</div>
+
+<!-- Cookie Banner -->
+<div id="cookie-banner">
+    Diese Website verwendet Cookies, um dein Erlebnis zu verbessern. 
+    <button onclick="acceptCookies()">Akzeptieren</button>
+</div>
+
+<script>
+function checkPassword() {
+    const input = document.getElementById("password").value;
+    const error = document.getElementById("error");
+    if (input === "ticklemytip15") {
+        document.getElementById("login-box").style.display = "none";
+        document.getElementById("main-title").style.display = "none"; // Haupt-Slogan ausblenden
+        document.getElementById("content").style.display = "block";
+        error.textContent = "";
+    } else {
+        error.textContent = "Falsches Passwort!";
+    }
+}
+
+function acceptCookies() {
+    document.getElementById("cookie-banner").style.display = "none";
+    localStorage.setItem("cookiesAccepted", "true");
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    if (!localStorage.getItem("cookiesAccepted")) {
+        document.getElementById("cookie-banner").style.display = "block";
+    }
+});
+</script>
+
+</body>
+</html>
+
+
+
