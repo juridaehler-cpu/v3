@@ -189,7 +189,7 @@ a.donate-btn { background:#ffc439; color:black; font-weight:bold; }
 <div id="logout-btn">⬅️ Logout</div>
 
 <div class="gallery">
-<!-- Bilder hier wie im Originalcode -->
+<!-- Bilder wie im Originalcode -->
         <img src="vik.jpg" alt="vik">
         <img src="jp.png" alt="jp">
         <img src="actrually.webp" alt="actrually">
@@ -398,7 +398,7 @@ function checkPassword(){
 // Logout
 document.getElementById("logout-btn").onclick = () => {
     document.getElementById("logout-notification").style.display="block";
-    setTimeout(()=> location.reload(), 2000); // zeigt Nachricht 2 Sekunden, dann reload
+    setTimeout(()=> location.reload(), 2000);
 };
 
 // Dark Mode
@@ -433,6 +433,17 @@ function setCookie(name,value,days){
   document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/";
 }
 if(!document.cookie.includes("acceptedCookies=true")) document.getElementById("cookie-banner").style.display="block";
+
+// Zufälliges Meme anzeigen
+document.getElementById("random-btn-page").onclick = () => {
+    const images = document.querySelectorAll(".gallery img");
+    if(images.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * images.length);
+    const randomImage = images[randomIndex];
+    const lightbox = document.getElementById("lightbox");
+    lightbox.querySelector("img").src = randomImage.src;
+    lightbox.style.display = "flex";
+};
 </script>
 
 </body>
