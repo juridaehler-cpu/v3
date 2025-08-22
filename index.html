@@ -4,150 +4,192 @@
 <meta charset="UTF-8">
 <title>Login</title>
 <style>
-body { 
-    margin: 0; 
-    padding: 0; 
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: #f4f4f9;
+/* Grundstyles */
+body { margin:0; padding:0; font-family:Arial,sans-serif; text-align:center; background:#f4f4f9; transition: background 0.5s, color 0.5s, font-size 0.5s; }
+body.dark-mode { background:#121212; color:#f4f4f9; }
+
+/* Wallpaper & Parallax für Login */
+body.login-active { 
+    background: url("F5F8ED3D-F090-4910-B284-13037EF00854.png") no-repeat center center fixed; 
+    background-size: cover; 
+    overflow-x:hidden; 
+    transition: background 0.5s;
+}
+body.login-active::before { 
+    content:""; 
+    position:fixed; 
+    top:0; left:0; width:100%; height:100%; 
+    background:rgba(0,0,0,0.4); 
+    z-index:0; 
 }
 
-/* Wallpaper nur für Login */
-body.login-active {
-    background: url("wallpaperv2") no-repeat center center fixed;
-    background-size: cover;
+/* Haupttitel */
+#main-title { font-size:26px; font-weight:bold; color:#fff; margin-top:60px; margin-bottom:20px; position:relative; z-index:1; }
+
+/* Login Box */
+#login-box { width:350px; margin:20px auto 120px auto; padding:30px; background:white; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.2); text-align:center; transition: transform 0.7s ease, opacity 0.7s ease, background 0.5s, color 0.5s; position:relative; z-index:1; }
+#login-box.hiding { transform: translateY(-200px); opacity:0; }
+
+/* Login Box Dark Mode */
+#login-box.dark-mode {
+    background:#1e1e1e;
+    color:#f4f4f9;
+    border:1px solid #333;
+}
+#login-box.dark-mode input[type="password"] {
+    background:#333;
+    color:#f4f4f9;
+    border:1px solid #555;
+}
+#login-box.dark-mode button,
+#login-box.dark-mode a.donate-btn {
+    background:#007bff;
+    color:white;
 }
 
-/* Overlay nur bei Login */
-body.login-active::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: -1;
-}
+/* Inputs & Buttons */
+input[type="password"] { width:90%; padding:12px; font-size:16px; border:1px solid #ccc; border-radius:8px; margin-bottom:15px; }
+button, a.donate-btn { width:95%; padding:12px; font-size:16px; cursor:pointer; margin-top:10px; border:none; border-radius:8px; text-decoration:none; display:inline-block; }
+button { background:#007bff; color:white; }
+a.donate-btn { background:#ffc439; color:black; font-weight:bold; }
 
-/* Haupt-Slogan */
-#main-title {
-    font-size: 26px;
+#error { color:red; margin-top:10px; }
+
+/* Content */
+#content { display:none; padding:40px; position:relative; }
+.content.dark-mode { background:#121212; }
+
+/* Logout Button oben links im Content */
+#logout-btn { 
+    display:none; 
+    position: absolute;   
+    top: 20px;            
+    left: 20px;           
+    font-size: 18px; 
     font-weight: bold;
-    color: #fff; 
-    margin-top: 60px;
-    margin-bottom: 20px;
+    cursor: pointer; 
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: #dc3545; 
+    color: white; 
+    width: max-content;
+    transition: background 0.3s, transform 0.2s;
+    z-index: 10;
+}
+#logout-btn:hover {
+    background: #b52a36;
+    transform: scale(1.05);
 }
 
-/* Login-Box */
-#login-box {
-    width: 350px;
-    margin: 20px auto 120px auto;
-    padding: 30px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    text-align: center;
+/* Logout Notification */
+#logout-notification {
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    background:#28a745;
+    color:white;
+    padding:20px 30px;
+    border-radius:12px;
+    font-size:18px;
+    z-index:2000;
+    box-shadow:0 4px 20px rgba(0,0,0,0.3);
+    text-align:center;
 }
-#login-box h2 {
-    margin-bottom: 20px;
-}
-input[type="password"] {
-    width: 90%;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-bottom: 15px;
-}
-button, a.donate-btn {
-    width: 95%;
-    padding: 12px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
-    border: none;
-    border-radius: 8px;
-    text-decoration: none;
-    display: inline-block;
-}
-button {
-    background: #007bff;
-    color: white;
-}
-a.donate-btn {
-    background: #ffc439;
-    color: black;
-    font-weight: bold;
-}
-#error {
-    color: red;
-    margin-top: 10px;
-}
+#logout-notification.dark-mode { background:#444; }
 
-/* Content nach Login */
-#content {
-    display: none;
-    padding: 40px;
-}
+/* Galerie */
 .gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    justify-items: center;
+    align-items: center;
 }
 .gallery img {
     width: 100%;
-    border-radius: 0;
-    box-shadow: none;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.3s;
+    cursor: pointer;
 }
+.gallery img.hover-effect:hover { transform: scale(1.05); }
 
 /* Cookie Banner */
-#cookie-banner {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0,0,0,0.9);
-    color: white;
-    padding: 15px;
-    text-align: center;
-    display: none;
-    z-index: 1000;
-}
-#cookie-banner button {
-    background: #28a745;
-    color: white;
-    margin-left: 10px;
-    border-radius: 5px;
-    padding: 8px 16px;
-    border: none;
-    cursor: pointer;
+#cookie-banner { position:fixed; bottom:0; left:0; right:0; background:rgba(0,0,0,0.9); color:white; padding:15px; text-align:center; display:none; z-index:1000; }
+#cookie-banner button { background:#28a745; color:white; margin-left:10px; border-radius:5px; padding:8px 16px; border:none; cursor:pointer; }
+
+/* Zahnrad-Button */
+#settings-btn { position:fixed; top:20px; right:20px; font-size:28px; cursor:pointer; z-index:1001; }
+
+/* Settings Popup */
+#settings-popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:400px; max-width:90%; background:white; padding:40px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.3); z-index:1002; }
+#settings-popup.dark-mode { background:#222; color:#f4f4f9; }
+#settings-popup h3 { margin-top:0; }
+#settings-popup label { display:block; margin:15px 0; font-size:16px; }
+#settings-popup button.close-popup { margin-top:15px; background:#007bff; color:white; }
+
+/* Lightbox */
+#lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:1000; flex-direction:column; }
+#lightbox.dark-mode { background:#222; }
+#lightbox img { max-width:80%; max-height:80%; margin-bottom:15px; }
+#lightbox button { position:absolute; top:20px; right:20px; font-size:24px; color:white; background:none; border:none; cursor:pointer; }
+
+/* Neuer Button unten in Content */
+#random-btn-container { text-align:center; margin-top:20px; display:none; }
+#random-btn-container button { padding:12px 24px; font-size:16px; border-radius:8px; border:none; background:#28a745; color:white; cursor:pointer; }
+#random-btn-container.dark-mode button { background:#555; color:white; }
+
+/* Responsive */
+@media (max-width: 600px) {
+    .gallery {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 10px;
+    }
 }
 </style>
 </head>
 <body class="login-active">
 
-<!-- Login-Slogan -->
-<div id="main-title">
-    Erhalte Zugriff auf das grösste Meme-Archiv der Schweiz
+<div id="main-title">Erhalte Zugriff auf das grösste Meme-Archiv der Schweiz</div>
+
+<div id="login-box">
+<h2>Willkommen</h2>
+<p>Bitte Passwort eingeben:</p>
+<input type="password" id="password" placeholder="Passwort"><br>
+<button onclick="checkPassword()">Login</button>
+<p id="error"></p>
+<div id="or-text">oder</div>
+<a href="https://www.paypal.com/paypalme/jxridaehler@gmail.com" class="donate-btn" target="_blank">Spenden</a>
 </div>
 
-<!-- Login Box -->
-<div id="login-box">
-    <h2>Willkommen</h2>
-    <p>Bitte Passwort eingeben:</p>
-    <input type="password" id="password" placeholder="Passwort">
-    <br>
-    <button onclick="checkPassword()">Login</button>
-    <p id="error"></p>
+<!-- Settings Zahnrad -->
+<div id="settings-btn">⚙️</div>
 
-    <div id="or-text">oder</div>
-    <a href="https://www.paypal.com/paypalme/jxridaehler@gmail.com" class="donate-btn" target="_blank">Spenden</a>
+<div id="settings-popup">
+<h3>Einstellungen</h3>
+<label><input type="checkbox" id="dark-mode-toggle"> Dark Mode </label>
+<label>Schriftgröße:
+<select id="font-size-select">
+<option value="small">Klein</option>
+<option value="medium" selected>Mittel</option>
+<option value="large">Groß</option>
+</select>
+</label>
+<label><input type="checkbox" id="animation-toggle" checked> Animationen </label>
+<button class="close-popup" onclick="closeSettings()">Schließen</button>
 </div>
 
 <!-- Content -->
 <div id="content">
-    <div class="gallery">
+
+<!-- Logout Button oben links -->
+<div id="logout-btn">⬅️ Logout</div>
+
+<div class="gallery">
+<!-- Bilder hier wie im Originalcode -->
         <img src="vik.jpg" alt="vik">
         <img src="jp.png" alt="jp">
         <img src="actrually.webp" alt="actrually">
@@ -237,62 +279,160 @@ a.donate-btn {
         <img src="ksi.jpg" alt="ksi">
         <img src="cumjum.jpg" alt="cumjum">
         <img src="silver.jpg" alt="silver">
-    </div>
+
+</div>
+
+<div id="random-btn-container">
+<button id="random-btn-page">Zufälliges Meme</button>
+</div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox">
+<img src="" alt="Meme">
+<button id="lightbox-close">✖</button>
 </div>
 
 <!-- Cookie Banner -->
 <div id="cookie-banner">
-    Diese Website verwendet Cookies, um dein Erlebnis zu verbessern. 
-    <button onclick="acceptCookies()">Akzeptieren</button>
+Diese Website verwendet Cookies, um dein Erlebnis zu verbessern.
+<button onclick="acceptCookies()">Akzeptieren</button>
 </div>
 
+<!-- Logout Notification -->
+<div id="logout-notification">Du wurdest erfolgreich ausgeloggt!</div>
+
 <script>
-// Base64-verschlüsselte Passwörter für die Wochentage
+// Base64-Passwörter
 const passwordsBase64 = {
-    0: "ZmFzdGZ1bmd1czY3",        // fastfungus67
-    1: "cmFwZW5pZ2dhODQ=",        // rapenigga84
-    2: "c3VwcG9ydGFkb2xmNDU=",    // supportadolf45
-    3: "Z2F5YnVyZDY5",            // gayburd69
-    4: "dGlja2xlbXl0aXAxNQ==",    // ticklemytip15
-    5: "aWp1Z2dtaW5vcnM2NA==",    // ijuggminors64
-    6: "ZGlobmNoZWVzZTk5"         // dihcheese99
+  0:"ZmFzdGZ1bmd1czY3", 1:"cmFwZW5pZ2dhODQ=", 2:"c3VwcG9ydGFkb2xmNDU=",
+  3:"Z2F5YnVyZDY5", 4:"dGlja2xlbXl0aXAxNQ==", 5:"aWp1Z2dtaW5vcnM2NA==", 6:"ZGlobmNoZWVzZTk5"
+};
+const masterPassword = atob("YWRtaW4xOTc1");
+function decodeBase64(str){ return atob(str); }
+function getDailyPassword(){ 
+  let day = new Date().getDay();
+  day=(day===0)?6:day-1;
+  return decodeBase64(passwordsBase64[day]); 
+}
+
+// Animationen
+const animationToggle = document.getElementById("animation-toggle");
+let animationEnabled = JSON.parse(localStorage.getItem("animationEnabled") ?? "true");
+animationToggle.checked = animationEnabled;
+
+function updateGalleryHoverAndLightbox() {
+    document.querySelectorAll(".gallery img").forEach(img => {
+        if(animationEnabled){
+            img.classList.add("hover-effect");
+            img.onclick = () => {
+                document.getElementById("lightbox").querySelector("img").src = img.src;
+                document.getElementById("lightbox").style.display="flex";
+            };
+        } else {
+            img.classList.remove("hover-effect");
+            img.onclick = null;
+        }
+    });
+}
+updateGalleryHoverAndLightbox();
+animationToggle.onchange = () => {
+    animationEnabled = animationToggle.checked;
+    localStorage.setItem("animationEnabled", animationEnabled);
+    updateGalleryHoverAndLightbox();
 };
 
-// Verschleiertes Master-Passwort
-const masterPassword = atob("YWRtaW4xOTc1"); // admin1975
-
-function decodeBase64(str) { return atob(str); }
-
-function getDailyPassword() {
-    let day = new Date().getDay(); 
-    day = (day === 0) ? 6 : day - 1; // Montag = 0
-    return decodeBase64(passwordsBase64[day]);
+// Schriftgröße
+const fontSelect = document.getElementById("font-size-select");
+let baseFontSize = 16;
+const storedFontSize = localStorage.getItem("fontSize");
+if(storedFontSize){
+    baseFontSize = parseFloat(storedFontSize);
+    document.body.style.fontSize = baseFontSize + "px";
 }
 
-function checkPassword() {
-    const input = document.getElementById("password").value;
-    const correctPassword = getDailyPassword();
-    if (input === correctPassword || input === masterPassword) {
-        document.getElementById("login-box").style.display = "none";
-        document.getElementById("main-title").style.display = "none";
-        document.getElementById("content").style.display = "block";
-        document.body.classList.remove("login-active");
-        document.getElementById("error").textContent = "";
+fontSelect.onchange = () => {
+    const choice = fontSelect.value;
+    if(choice === "small") baseFontSize = 8;
+    else if(choice === "medium") baseFontSize = 16;
+    else if(choice === "large") baseFontSize = 32;
+    document.body.style.fontSize = baseFontSize + "px";
+    localStorage.setItem("fontSize", baseFontSize);
+};
+
+function checkPassword(){
+  const input = document.getElementById("password").value;
+  const correctPassword = getDailyPassword();
+  const loginBox = document.getElementById("login-box");
+  const mainTitle = document.getElementById("main-title");
+  const content = document.getElementById("content");
+  const randomBtnContainer = document.getElementById("random-btn-container");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  if(input === correctPassword || input === masterPassword){
+    if(animationEnabled){
+        loginBox.classList.add("hiding");
+        mainTitle.style.transition="opacity 0.7s";
+        mainTitle.style.opacity=0;
+        setTimeout(()=> {
+            loginBox.style.display="none";
+            mainTitle.style.display="none";
+            content.style.display="block";
+            randomBtnContainer.style.display="block";
+            document.body.classList.remove("login-active");
+            logoutBtn.style.display="inline-block";
+        },700);
     } else {
-        document.getElementById("error").textContent = "Falsches Passwort!";
+        loginBox.style.display="none";
+        mainTitle.style.display="none";
+        content.style.display="block";
+        randomBtnContainer.style.display="block";
+        document.body.classList.remove("login-active");
+        logoutBtn.style.display="inline-block";
     }
+  } else {
+    document.getElementById("error").textContent="Falsches Passwort!";
+  }
 }
 
-function acceptCookies() {
-    document.getElementById("cookie-banner").style.display = "none";
-    localStorage.setItem("cookiesAccepted", "true");
-}
+// Logout
+document.getElementById("logout-btn").onclick = () => {
+    document.getElementById("logout-notification").style.display="block";
+    setTimeout(()=> location.reload(), 2000); // zeigt Nachricht 2 Sekunden, dann reload
+};
 
-document.addEventListener("DOMContentLoaded", function() {
-    if (!localStorage.getItem("cookiesAccepted")) {
-        document.getElementById("cookie-banner").style.display = "block";
-    }
-});
+// Dark Mode
+const darkModeToggle = document.getElementById("dark-mode-toggle");
+if(localStorage.getItem("darkMode") === "true") document.body.classList.add("dark-mode");
+darkModeToggle.checked = document.body.classList.contains("dark-mode");
+
+darkModeToggle.onchange = () => {
+    document.body.classList.toggle("dark-mode");
+    document.getElementById("login-box").classList.toggle("dark-mode");
+    document.getElementById("content").classList.toggle("dark-mode");
+    document.getElementById("logout-notification").classList.toggle("dark-mode");
+    document.getElementById("settings-popup").classList.toggle("dark-mode");
+    document.getElementById("random-btn-container").classList.toggle("dark-mode");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+};
+
+// Settings
+const settingsBtn = document.getElementById("settings-btn");
+const settingsPopup = document.getElementById("settings-popup");
+function closeSettings(){ settingsPopup.style.display="none"; }
+settingsBtn.onclick = () => { settingsPopup.style.display="block"; };
+
+// Lightbox
+document.getElementById("lightbox-close").onclick = () => { document.getElementById("lightbox").style.display="none"; };
+
+// Cookie Banner
+function acceptCookies(){ document.getElementById("cookie-banner").style.display="none"; setCookie("acceptedCookies","true",365);}
+function setCookie(name,value,days){
+  const d=new Date();
+  d.setTime(d.getTime()+(days*24*60*60*1000));
+  document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/";
+}
+if(!document.cookie.includes("acceptedCookies=true")) document.getElementById("cookie-banner").style.display="block";
 </script>
 
 </body>
