@@ -31,7 +31,7 @@ a.donate-btn { background:#ffc439; color:black; font-weight:bold; }
 #logout-btn:hover { background:#b52a36; }
 #upload-btn { font-size:18px; font-weight:bold; cursor:pointer; padding:10px 15px; border-radius:8px; background:#28a745; color:white; }
 #upload-btn:hover { background:#1e7e34; }
-#logout-notification { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#28a745; color:white; padding:20px 30px; border-radius:12px; font-size:18px; z-index:2000; box-shadow:0 4px 20px rgba(0,0,0,0.3); text-align:center; }
+#logout-notification { display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#28a745; color:white; padding:20px 30px; border-radius:12px; font-size:18px; z-index:2000; box-shadow:0 4px 20px rgba(0,0,0,0.3); text-align:center; transition: opacity 0.5s; }
 #logout-notification.dark-mode { background:#444; }
 .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; justify-items: center; align-items: center; }
 .gallery img {
@@ -219,7 +219,6 @@ a.donate-btn { background:#ffc439; color:black; font-weight:bold; }
 
 <div id="logout-notification">Du wurdest erfolgreich ausgeloggt!</div>
 
-<!-- Firebase SDKs (ohne Storage) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -230,7 +229,6 @@ const firebaseConfig = {
   apiKey: "AIzaSyCquaWxIaakG_KH3gdULBWQ5AqnOlcNWkk",
   authDomain: "backend-website-825cd.firebaseapp.com",
   projectId: "backend-website-825cd",
-  // storageBucket bleibt ungenutzt
   storageBucket: "backend-website-825cd.appspot.com",
   messagingSenderId: "255366578644",
   appId: "1:255366578644:web:277fa35b90e10b03311641",
@@ -239,6 +237,9 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
+
+// ======= Immer auf Login starten =======
+window.onload = () => { auth.signOut(); };
 
 // ======= Dark Mode =======
 const darkModeToggle = document.getElementById("dark-mode-toggle");
@@ -265,7 +266,6 @@ const animationToggle = document.getElementById("animation-toggle");
 function updateAnimations() {
   const images = document.querySelectorAll(".gallery img");
   const lightbox = document.getElementById("lightbox");
-
   if(animationToggle.checked){
     images.forEach(img => img.classList.add("hover-effect"));
     lightbox.dataset.enabled = "true";
@@ -275,11 +275,7 @@ function updateAnimations() {
   }
   localStorage.setItem("animations", animationToggle.checked);
 }
-if(localStorage.getItem("animations") === "false"){
-  animationToggle.checked = false;
-} else {
-  animationToggle.checked = true;
-}
+if(localStorage.getItem("animations") === "false") animationToggle.checked = false;
 updateAnimations();
 animationToggle.onchange = updateAnimations;
 
@@ -337,8 +333,12 @@ document.getElementById("register-btn").onclick = () => {
 document.getElementById("logout-btn").onclick = () => {
   auth.signOut().then(()=>{
     const notif = document.getElementById("logout-notification");
-    notif.style.display = "block";
-    setTimeout(()=>location.reload(),1500);
+    notif.style.opacity = "1";
+    notif.style.display = "block"; // Banner einblenden
+    setTimeout(()=>{
+      notif.style.opacity = "0"; // langsam ausblenden
+      setTimeout(()=>showLoginUI(), 500); // Login anzeigen nach fadeout
+    }, 2000);
   });
 };
 
@@ -353,14 +353,13 @@ function addImageToGallery(src){
 
 let memesUnsub = null;
 function startMemesListener(){
-  if (memesUnsub) return; // schon aktiv
+  if (memesUnsub) return;
   memesUnsub = db.collection("memes")
     .orderBy("timestamp")
     .onSnapshot(snapshot => {
       snapshot.docChanges().forEach(change => {
         if(change.type === "added"){
           const data = change.doc.data();
-          // unterstützt alte und neue Felder
           const src = data.dataUrl || data.url;
           if (src) addImageToGallery(src);
         }
@@ -368,31 +367,20 @@ function startMemesListener(){
     });
 }
 
-// ======= Upload (ohne Storage, Base64 in Firestore) =======
+// ======= Upload =======
 document.getElementById("upload-btn").onclick = () => document.getElementById("file-input").click();
 document.getElementById("file-input").onchange = async (e) => {
   const file = e.target.files[0]; 
   if(!file) return;
 
-  // Größenlimit: 250 KB (Rohdatei)
   const MAX_BYTES = 250 * 1024;
-  if (file.size > MAX_BYTES) {
-    alert("Bild ist zu groß. Maximal 250 KB erlaubt.");
-    e.target.value = "";
-    return;
-  }
-
-  // Nur Bilder erlauben
-  if (!file.type.startsWith("image/")) {
-    alert("Bitte eine Bilddatei auswählen.");
-    e.target.value = "";
-    return;
-  }
+  if (file.size > MAX_BYTES) { alert("Bild ist zu groß. Maximal 250 KB erlaubt."); e.target.value=""; return; }
+  if (!file.type.startsWith("image/")) { alert("Bitte eine Bilddatei auswählen."); e.target.value=""; return; }
 
   const reader = new FileReader();
   reader.onload = async () => {
     try {
-      const dataUrl = reader.result; // z.B. "data:image/png;base64,...."
+      const dataUrl = reader.result;
       await db.collection("memes").add({
         dataUrl: dataUrl,
         name: file.name,
@@ -401,11 +389,8 @@ document.getElementById("file-input").onchange = async (e) => {
         uid: auth.currentUser ? auth.currentUser.uid : null,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
-      e.target.value = "";
-    } catch (err) {
-      console.error(err);
-      alert("Fehler beim Hochladen in Firestore.");
-    }
+      e.target.value="";
+    } catch (err) { console.error(err); alert("Fehler beim Hochladen in Firestore."); }
   };
   reader.readAsDataURL(file);
 };
@@ -436,14 +421,14 @@ document.getElementById("random-btn-page").onclick = () => {
   lightbox.style.display="flex";
 };
 
-// ======= Auth-Status beobachten, UI & Listener starten =======
+// ======= Auth-Status beobachten =======
 auth.onAuthStateChanged(user => {
   if (user) {
     showAppUI();
     startMemesListener();
   } else {
     showLoginUI();
-    if (memesUnsub) { memesUnsub(); memesUnsub = null; }
+    if (memesUnsub) { memesUnsub(); memesUnsub=null; }
   }
 });
 </script>
