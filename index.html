@@ -52,7 +52,7 @@
   .admin-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:10px 0 20px; }
   .admin-title { font-size:24px; font-weight:700; }
   .tabs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
-  .tab-btn { padding:10px 12px; border-radius:10px; border:1px solid #ccc; background:#fff; cursor:pointer; font-weight:700; }
+  .tab-btn { padding:10px 12px; border-radius:10px; border:1px solid #ccc; background:#fff; cursor:pointer; font-weight:700; color:#000; }
   body.dark-mode .tab-btn { background:#1e1e1e; color:#f4f4f9; border-color:#333; }
   .tab-btn.active { border-color:var(--primary); outline:2px solid var(--primary); }
   .tab { display:none; background:#fff; border:1px solid #e5e5e5; border-radius:12px; padding:16px; }
@@ -84,6 +84,52 @@
 <div id="announcement-banner"></div>
 <div id="maintenance-overlay"><h2>🚧 Wartungsarbeiten</h2><p>Die Website ist aktuell wegen Wartungsarbeiten nicht verfügbar. Bitte versuche es später erneut.</p></div>
 
+<!-- Info-Button -->
+<div id="info-btn" style="position:fixed; top:20px; left:20px; font-size:28px; cursor:pointer; z-index:1001;">ℹ️</div>
+
+<!-- Overlay / Popup -->
+<div id="info-popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; justify-content:center; align-items:center;">
+  <div style="background:#fff; padding:20px; border-radius:12px; max-width:700px; width:90%; box-shadow:0 4px 20px rgba(0,0,0,.3); position:relative;">
+    <span id="close-popup" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:22px;">✖️</span>
+    <h3>ℹ️ Infos zum Meme-Archiv</h3>
+    <p>Willkommen im grössten Meme-Archiv der Schweiz! Hier ein paar Hinweise:</p>
+    <ul style="text-align:left; margin-left:20px;">
+      <li><strong>Upload:</strong> Maximal 250 KB, nur Bilddateien (.jpg, .png, .webp etc.).</li>
+      <li><strong>Moderation:</strong> Alle Uploads werden von Mods überprüft, um illegale Inhalte zu vermeiden. Dennoch kann es vorkommen, dass Inhalte vorübergehend online erscheinen.</li>
+      <li><strong>Regeln:</strong> Keine illegalen, beleidigenden oder diskriminierenden Inhalte. Verstöße können zum Löschen des Accounts führen.</li>
+      <li><strong>Dark Mode:</strong> Über die Einstellungen aktivierbar.</li>
+      <li><strong>Zufällige Memes:</strong> Mit dem Button „Zufälliges Meme“ kannst du ein Meme aus der Galerie aufrufen.</li>
+      <li><strong>Datenschutz:</strong> Deine E-Mail und Daten werden geschützt, nur für Authentifizierung & Statistik verwendet.</li>
+      <li><strong>Support:</strong> Probleme oder Fragen an <a href="mailto:meme.archivsuisse@gmail.com">meme.archivsuisse@gmail.com</a>.</li>
+      <li><strong>Wartung:</strong> Gelegentliche Wartungsarbeiten möglich. Banner auf der Startseite informieren über aktuelle Änderungen.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const infoBtn = document.getElementById('info-btn');
+    const infoPopup = document.getElementById('info-popup');
+    const closeBtn = document.getElementById('close-popup');
+
+    infoBtn.addEventListener('click', () => {
+        infoPopup.style.display = 'flex';
+    });
+
+    closeBtn.addEventListener('click', () => {
+        infoPopup.style.display = 'none';
+    });
+
+    // Klick außerhalb des Popups schließt es ebenfalls
+    infoPopup.addEventListener('click', (e) => {
+        if(e.target === infoPopup) infoPopup.style.display = 'none';
+    });
+});
+</script>
+
+
+
+
 <!-- Login -->
 <div id="main-title">Erhalte Zugriff auf das grösste Meme-Archiv der Schweiz</div>
 <div id="login-box">
@@ -94,7 +140,12 @@
   <button id="login-btn">Login</button>
   <button id="register-btn">Registrieren</button>
   <p id="error"></p>
-  <div id="or-text">oder</div>
+  <div style="display:flex; align-items:center; justify-content:center; margin:10px 0;">
+  <hr style="flex:1; border:none; border-top:1px solid #ccc; margin-right:10px;">
+  <span>oder</span>
+  <hr style="flex:1; border:none; border-top:1px solid #ccc; margin-left:10px;">
+</div>
+
   <a href="https://www.paypal.com/paypalme/jxridaehler@gmail.com" class="donate-btn" target="_blank">Spenden</a>
 </div>
 
@@ -310,6 +361,8 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+
+
 // Start immer auf Login
 window.onload = () => { auth.signOut(); };
 
@@ -427,6 +480,7 @@ loginBtn.onclick = async () => {
   try {
     const cred = await auth.signInWithEmailAndPassword(email,password);
     await afterLoginSetup(cred.user);
+
   } catch(e){ errorBox.textContent=e.message; }
 };
 
