@@ -1,133 +1,319 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Meme Galerie</title>
-  <style>
-    body { font-family: sans-serif; max-width: 800px; margin: auto; }
-    #gallery img { margin: 5px; border-radius: 8px; }
-    #controls { margin-top: 10px; }
-    #uploadSection { display: none; margin-top: 10px; }
-  </style>
+<meta charset="UTF-8">
+<title>Login</title>
+<style>
+body { margin:0; padding:0; font-family:Arial,sans-serif; text-align:center; background:#f4f4f9; transition: background 0.5s, color 0.5s, font-size 0.5s; }
+body.dark-mode { background:#121212; color:#f4f4f9; }
+body.login-active { 
+    background: url("F5F8ED3D-F090-4910-B284-13037EF00854.png") no-repeat center center fixed; 
+    background-size: cover; 
+    overflow-x:hidden; 
+    transition: background 0.5s;
+}
+body.login-active::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:0; }
+#main-title { font-size:26px; font-weight:bold; color:#fff; margin-top:60px; margin-bottom:20px; position:relative; z-index:1; }
+#login-box { width:350px; margin:20px auto 120px auto; padding:30px; background:white; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.2); text-align:center; transition: transform 0.7s ease, opacity 0.7s ease, background 0.5s, color 0.5s; position:relative; z-index:1; }
+#login-box.hiding { transform: translateY(-200px); opacity:0; }
+#login-box.dark-mode { background:#1e1e1e; color:#f4f4f9; border:1px solid #333; }
+#login-box.dark-mode input { background:#333; color:#f4f4f9; border:1px solid #555; }
+#login-box.dark-mode button, #login-box.dark-mode a.donate-btn { background:#007bff; color:white; }
+input { width:90%; padding:12px; font-size:16px; border:1px solid #ccc; border-radius:8px; margin-bottom:15px; }
+button, a.donate-btn { width:95%; padding:12px; font-size:16px; cursor:pointer; margin-top:10px; border:none; border-radius:8px; text-decoration:none; display:inline-block; }
+button { background:#007bff; color:white; }
+a.donate-btn { background:#ffc439; color:black; font-weight:bold; }
+#error { color:red; margin-top:10px; }
+#content { display:none; padding:40px; position:relative; }
+.content.dark-mode { background:#121212; }
+#buttons-container { display:none; text-align:center; margin-bottom:20px; }
+#logout-btn { font-size:18px; font-weight:bold; cursor:pointer; padding:10px 15px; border-radius:8px; background: #dc3545; color:white; margin-right:10px; }
+#logout-btn:hover { background:#b52a36; }
+#upload-btn { font-size:18px; font-weight:bold; cursor:pointer; padding:10px 15px; border-radius:8px; background:#28a745; color:white; }
+#upload-btn:hover { background:#1e7e34; }
+#logout-notification { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#28a745; color:white; padding:20px 30px; border-radius:12px; font-size:18px; z-index:2000; box-shadow:0 4px 20px rgba(0,0,0,0.3); text-align:center; }
+#logout-notification.dark-mode { background:#444; }
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; justify-items: center; align-items: center; }
+.gallery img { width:100%; height:auto; object-fit:cover; border-radius:8px; transition: transform 0.3s; cursor:pointer; }
+.gallery img.hover-effect:hover { transform: scale(1.05); }
+#cookie-banner { position:fixed; bottom:0; left:0; right:0; background:rgba(0,0,0,0.9); color:white; padding:15px; text-align:center; display:none; z-index:1000; }
+#cookie-banner button { background:#28a745; color:white; margin-left:10px; border-radius:5px; padding:8px 16px; border:none; cursor:pointer; }
+#settings-btn { position:fixed; top:20px; right:20px; font-size:28px; cursor:pointer; z-index:1001; }
+#settings-popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:400px; max-width:90%; background:white; padding:40px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.3); z-index:1002; }
+#settings-popup.dark-mode { background:#222; color:#f4f4f9; }
+#settings-popup h3 { margin-top:0; }
+#settings-popup label { display:block; margin:15px 0; font-size:16px; }
+#settings-popup button.close-popup { margin-top:15px; background:#007bff; color:white; }
+#lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; z-index:1000; flex-direction:column; }
+#lightbox.dark-mode { background:#222; }
+#lightbox img { max-width:80%; max-height:80%; margin-bottom:15px; }
+#lightbox button { position:absolute; top:20px; right:20px; font-size:24px; color:white; background:none; border:none; cursor:pointer; }
+#random-btn-container { text-align:center; margin-top:20px; display:none; }
+#random-btn-container button { padding:12px 24px; font-size:16px; border-radius:8px; border:none; background:#28a745; color:white; cursor:pointer; }
+#random-btn-container.dark-mode button { background:#555; color:white; }
+@media (max-width: 600px) { .gallery { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:10px; } }
+</style>
 </head>
-<body>
-  <h2>Login / Registrierung</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Passwort">
-  <div id="controls">
-    <button id="registerBtn">Registrieren</button>
-    <button id="loginBtn">Login</button>
-    <button id="logoutBtn" style="display:none;">Logout</button>
-    <button id="uploadToggleBtn" style="display:none;">➕</button>
-  </div>
-  <p id="status">Nicht eingeloggt</p>
+<body class="login-active">
 
-  <div id="uploadSection">
-    <h3>Foto hochladen</h3>
-    <input type="file" id="fileInput">
-    <button id="uploadBtn">Hochladen</button>
-  </div>
+<div id="main-title">Erhalte Zugriff auf das grösste Meme-Archiv der Schweiz</div>
 
-  <h2>Galerie</h2>
-  <div id="gallery"></div>
+<div id="login-box">
+<h2>Willkommen</h2>
+<p>Bitte E-Mail und Passwort eingeben:</p>
+<input type="email" id="email" placeholder="E-Mail"><br>
+<input type="password" id="password" placeholder="Passwort"><br>
+<button id="login-btn">Login</button>
+<button id="register-btn">Registrieren</button>
+<p id="error"></p>
+<div id="or-text">oder</div>
+<a href="https://www.paypal.com/paypalme/jxridaehler@gmail.com" class="donate-btn" target="_blank">Spenden</a>
+</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-    import { 
-      getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
-    import { 
-      getStorage, ref, uploadBytes, getDownloadURL 
-    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-storage.js";
-    import { 
-      getFirestore, collection, addDoc, onSnapshot 
-    } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+<div id="settings-btn">⚙️</div>
+<div id="settings-popup">
+<h3>Einstellungen</h3>
+<label><input type="checkbox" id="dark-mode-toggle"> Dark Mode </label>
+<label>Schriftgröße:
+<select id="font-size-select">
+<option value="small">Klein</option>
+<option value="medium" selected>Mittel</option>
+<option value="large">Groß</option>
+</select>
+</label>
+<label><input type="checkbox" id="animation-toggle" checked> Animationen </label>
+<button class="close-popup" onclick="closeSettings()">Schließen</button>
+</div>
 
-    // ⬇️ Deine Firebase Config
-    const firebaseConfig = {
-      apiKey: "AIzaSyCquaWxIaakG_KH3gdULBWQ5AqnOlcNWkk",
-      authDomain: "backend-website-825cd.firebaseapp.com",
-      projectId: "backend-website-825cd",
-      storageBucket: "backend-website-825cd.appspot.com",
-      messagingSenderId: "255366578644",
-      appId: "1:255366578644:web:277fa35b90e10b03311641",
-      measurementId: "G-5PJGM3D79G"
-    };
+<div id="content">
+<div id="buttons-container">
+  <button id="logout-btn">⬅️ Logout</button>
+  <button id="upload-btn">➕ Bild hochladen</button>
+  <input type="file" id="file-input" style="display:none;">
+</div>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const storage = getStorage(app);
-    const db = getFirestore(app);
+<div class="gallery">
+  <!-- Alte Bilder bleiben hier -->
+        <img src="vik.jpg" alt="vik">
+        <img src="jp.png" alt="jp">
+        <img src="actrually.webp" alt="actrually">
+        <img src="Quandale-Dingle-8 (1).jpg" alt="Quandale-Dingle">
+        <img src="what-music-do-you-think-i-listen-to-v0-5kxskzrgkv7f1.webp" alt="">
+        <img src="ah.jpeg" alt="ah">
+        <img src="bomba.jpeg" alt="bomba">
+        <img src="cum.jpeg" alt="cum">
+        <img src="luxulub.jpg" alt="luxulub">
+        <img src="sybau.webp" alt="sybau">
+        <img src="huhn.jpeg" alt="huhn">
+        <img src="cam.jpg" alt="cam">
+        <img src="cinema.jpg" alt="cinema">
+        <img src="corndog.jpg" alt="corn">
+        <img src="dihhh.jpg" alt="dihh">
+        <img src="grape.jpg" alt="grape">
+        <img src="grapeme.jpg" alt="me">
+        <img src="massive.jpg" alt="massive">
+        <img src="mouse.jpg" alt="mouse">
+        <img src="nga.jpg" alt="ng">
+        <img src="nihh.jpg" alt="nih">
+        <img src="outr.jpg" alt="outr">
+        <img src="pig.jpg" alt="pig">
+        <img src="reta.jpg" alt="reta">
+        <img src="shhh.jpg" alt="shhh">
+        <img src="soldat.jpg" alt="soldat">
+        <img src="speed.jpg" alt="speed">
+        <img src="uhh.jpg" alt="uh">
+        <img src="wha.jpg" alt="wha">
+        <img src="bibler.jpg" alt="bibler">
+        <img src="dihnih.jpg" alt="dihnih">
+        <img src="esel.jpg" alt="esel">
+        <img src="fibbler.jpg" alt="fibbler">
+        <img src="fubbler.jpg" alt="fubbler">
+        <img src="fungler.jpg" alt="fungler">
+        <img src="nibbler.jpg" alt="nibbler">
+        <img src="nihhh.jpg" alt="nihhh">
+        <img src="rapenibbler.jpg" alt="rapenibbler">
+        <img src="tiger.jpg" alt="tiger">
+        <img src="monanigla.jpg" alt="nigla">
+        <img src="fortnite.jpg" alt="fortnite">
+        <img src="gooner.jpg" alt="gooner">
+        <img src="gubbla.jpg" alt="gubbla">
+        <img src="apfel.jpg" alt="apfel">
+        <img src="zuggler.jpg" alt="zuggler">
+        <img src="ziggler.jpg" alt="ziggler">
+        <img src="zoggler.jpg" alt="zoggler">
+        <img src="zaggler.jpg" alt="zaggler">
+        <img src="nodih.jpg" alt="nodih">
+        <img src="scar.jpg" alt="scar">
+        <img src="egg.jpg" alt="egg">
+        <img src="slime.jpg" alt="slime">
+        <img src="kiwi.jpg" alt="kiwi">
+        <img src="frih.jpg" alt="frih">
+        <img src="bed.jpg" alt="bed">
+        <img src="brochacho.jpg" alt="vro">
+        <img src="patrick.jpg" alt="patrick">
+        <img src="edih.jpg" alt="edih">
+        <img src="apfle.jpg" alt="apfle">
+        <img src="wha!.jpg" alt="wha2">
+        <img src="alien.jpg" alt="alien">
+        <img src="kribbla.jpg" alt="kribbla">
+        <img src="kribbli.jpg" alt="kribbli">
+        <img src="kribblo.jpg" alt="kribblo">
+        <img src="kribble.jpg" alt="kribble">	
+        <img src="woom.jpg" alt="woom">
+        <img src="waam.jpg" alt="waam">
+        <img src="weem.jpg" alt="weem">
+        <img src="wuum.jpg" alt="wuum">
+        <img src="us.jpg" alt="us?">
+        <img src="henry.jpg" alt="henry">
+        <img src="un.jpg" alt="un">
+        <img src=".jpg" alt="">
+        <img src="vro.jpg" alt="vro">
+        <img src="sticks.jpg" alt="sticks">
+        <img src="cry.jpg" alt="cry">
+        <img src="report.jpg" alt="report">
+        <img src="uh.jpg" alt="uh">
+        <img src="cr.jpg" alt="cr">
+        <img src="obv.jpg" alt="obv">
+        <img src="sdg.jpg" alt="sdg">
+        <img src="glonk.jpg" alt="glonk">
+        <img src="haha.jpg" alt="haha">
+        <img src="speedd.jpg" alt="speedd">
+        <img src="molest.jpg" alt="molest">
+        <img src="pfust.jpg" alt="pfust">
+        <img src="ksi.jpg" alt="ksi">
+        <img src="cumjum.jpg" alt="cumjum">
+        <img src="silver.jpg" alt="silver">
+</div>
 
-    const statusEl = document.getElementById("status");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const uploadToggleBtn = document.getElementById("uploadToggleBtn");
-    const uploadSection = document.getElementById("uploadSection");
+<div id="random-btn-container">
+<button id="random-btn-page">Zufälliges Meme</button>
+</div>
+</div>
 
-    // Auth-Status überwachen
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        statusEl.innerText = `Eingeloggt als ${user.email}`;
-        logoutBtn.style.display = "inline-block";
-        uploadToggleBtn.style.display = "inline-block";
-      } else {
-        statusEl.innerText = "Nicht eingeloggt";
-        logoutBtn.style.display = "none";
-        uploadToggleBtn.style.display = "none";
-        uploadSection.style.display = "none";
-      }
-    });
+<div id="lightbox">
+<img src="" alt="Meme">
+<button id="lightbox-close">✖</button>
+</div>
 
-    // Registrierung
-    document.getElementById("registerBtn").onclick = async () => {
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
-      await createUserWithEmailAndPassword(auth, email, pass);
-      alert("Konto erstellt!");
-    };
+<div id="cookie-banner">
+Diese Website verwendet Cookies, um dein Erlebnis zu verbessern.
+<button onclick="acceptCookies()">Akzeptieren</button>
+</div>
 
-    // Login
-    document.getElementById("loginBtn").onclick = async () => {
-      const email = document.getElementById("email").value;
-      const pass = document.getElementById("password").value;
-      await signInWithEmailAndPassword(auth, email, pass);
-      alert("Login erfolgreich!");
-    };
+<div id="logout-notification">Du wurdest erfolgreich ausgeloggt!</div>
 
-    // Logout
-    logoutBtn.onclick = async () => {
-      await signOut(auth);
-    };
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-    // Upload-Bereich ein-/ausblenden
-    uploadToggleBtn.onclick = () => {
-      uploadSection.style.display = 
-        uploadSection.style.display === "none" ? "block" : "none";
-    };
+<script>
+// Firebase Init
+const firebaseConfig = {
+  apiKey: "AIzaSyCquaWxIaakG_KH3gdULBWQ5AqnOlcNWkk",
+  authDomain: "backend-website-825cd.firebaseapp.com",
+  projectId: "backend-website-825cd",
+  storageBucket: "backend-website-825cd.appspot.com",
+  messagingSenderId: "255366578644",
+  appId: "1:255366578644:web:277fa35b90e10b03311641",
+  measurementId: "G-5PJGM3D79G"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const storage = firebase.storage();
+const db = firebase.firestore();
 
-    // Foto hochladen
-    document.getElementById("uploadBtn").onclick = async () => {
-      const file = document.getElementById("fileInput").files[0];
-      if (!file) return alert("Bitte zuerst ein Bild auswählen!");
-      const storageRef = ref(storage, "images/" + Date.now() + "_" + file.name);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      await addDoc(collection(db, "photos"), { url });
-      alert("Foto hochgeladen!");
-    };
+// Dark Mode & Settings
+const darkModeToggle = document.getElementById("dark-mode-toggle");
+if(localStorage.getItem("darkMode") === "true") document.body.classList.add("dark-mode");
+darkModeToggle.checked = document.body.classList.contains("dark-mode");
+darkModeToggle.onchange = () => {
+    document.body.classList.toggle("dark-mode");
+    document.getElementById("login-box").classList.toggle("dark-mode");
+    document.getElementById("content").classList.toggle("dark-mode");
+    document.getElementById("logout-notification").classList.toggle("dark-mode");
+    document.getElementById("settings-popup").classList.toggle("dark-mode");
+    document.getElementById("random-btn-container").classList.toggle("dark-mode");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+};
+const settingsBtn = document.getElementById("settings-btn");
+const settingsPopup = document.getElementById("settings-popup");
+function closeSettings(){ settingsPopup.style.display="none"; }
+settingsBtn.onclick = () => { settingsPopup.style.display="block"; };
 
-    // Galerie in Echtzeit laden
-    const gallery = document.getElementById("gallery");
-    onSnapshot(collection(db, "photos"), (snapshot) => {
-      gallery.innerHTML = "";
-      snapshot.forEach((doc) => {
-        const img = document.createElement("img");
-        img.src = doc.data().url;
-        img.width = 200;
-        gallery.appendChild(img);
-      });
-    });
-  </script>
+// Login & Registrierung
+document.getElementById("login-btn").onclick = () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  auth.signInWithEmailAndPassword(email,password)
+      .then(()=> { 
+        document.getElementById("login-box").style.display="none";
+        document.getElementById("main-title").style.display="none";
+        document.body.classList.remove("login-active");
+        document.getElementById("content").style.display="block";
+        document.getElementById("buttons-container").style.display="block";
+      })
+      .catch(e=>document.getElementById("error").textContent=e.message);
+};
+document.getElementById("register-btn").onclick = () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  auth.createUserWithEmailAndPassword(email,password)
+      .then(()=>alert("Registrierung erfolgreich! Bitte einloggen."))
+      .catch(e=>document.getElementById("error").textContent=e.message);
+};
+
+// Logout
+document.getElementById("logout-btn").onclick = () => auth.signOut().then(()=>location.reload());
+
+// Upload
+document.getElementById("upload-btn").onclick = () => document.getElementById("file-input").click();
+document.getElementById("file-input").onchange = async (e) => {
+  const file = e.target.files[0]; if(!file) return;
+  const storageRef = storage.ref('memes/'+file.name);
+  await storageRef.put(file);
+  const url = await storageRef.getDownloadURL();
+  await db.collection("memes").add({url: url, timestamp: firebase.firestore.FieldValue.serverTimestamp()});
+  e.target.value = "";
+};
+
+// Alte & neue Bilder in Galerie
+function addImageToGallery(url){
+  const gallery = document.querySelector(".gallery");
+  const img = document.createElement("img");
+  img.src = url; img.classList.add("hover-effect");
+  img.onclick = ()=> { const lb=document.getElementById("lightbox"); lb.querySelector("img").src=url; lb.style.display="flex"; };
+  gallery.appendChild(img);
+}
+
+// Realtime Firestore Listener
+db.collection("memes").orderBy("timestamp").onSnapshot(snapshot => {
+  snapshot.docChanges().forEach(change => {
+    if(change.type === "added"){
+      addImageToGallery(change.doc.data().url);
+    }
+  });
+});
+
+// Lightbox
+document.getElementById("lightbox-close").onclick = () => document.getElementById("lightbox").style.display="none";
+
+// Cookie Banner
+function acceptCookies(){ document.getElementById("cookie-banner").style.display="none"; setCookie("acceptedCookies","true",365);}
+function setCookie(name,value,days){ const d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/";}
+if(!document.cookie.includes("acceptedCookies=true")) document.getElementById("cookie-banner").style.display="block";
+
+// Random Meme
+document.getElementById("random-btn-page").onclick = () => {
+  const images = document.querySelectorAll(".gallery img");
+  if(images.length===0) return;
+  const rand = Math.floor(Math.random()*images.length);
+  const lightbox = document.getElementById("lightbox");
+  lightbox.querySelector("img").src = images[rand].src;
+  lightbox.style.display="flex";
+};
+</script>
 </body>
 </html>
 
