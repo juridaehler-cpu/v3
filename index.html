@@ -111,7 +111,7 @@
     <h3>ℹ️ Infos zum Meme-Archiv</h3>
     <p>Willkommen im grössten Meme-Archiv der Schweiz! Hier ein paar Hinweise:</p>
     <ul style="text-align:left; margin-left:20px;">
-      <li><strong>Upload:</strong> Maximal 250 KB, nur Bilddateien (.jpg, .png, .webp etc.).</li>
+      <li><strong>Upload:</strong> Maximal 1000 KB, nur Bilddateien (.jpg, .png, .webp etc.).</li>
       <li><strong>Moderation:</strong> Alle Uploads werden von Mods überprüft, um illegale Inhalte zu vermeiden. Dennoch kann es vorkommen, dass Inhalte vorübergehend online erscheinen.</li>
       <li><strong>Regeln:</strong> Keine illegalen, beleidigenden oder diskriminierenden Inhalte. Verstöße können zum Löschen des Accounts führen.</li>
       <li><strong>Dark Mode:</strong> Über die Einstellungen aktivierbar.</li>
@@ -465,11 +465,11 @@ function startMemesListener(){
 }
 
 // ================= Upload =================
-const MAX_BYTES = 250*1024;
+const MAX_BYTES = 1000*1024;
 document.getElementById("upload-btn").onclick = () => document.getElementById("file-input").click();
 document.getElementById("file-input").onchange = async (e) => {
   const file = e.target.files[0]; if(!file) return;
-  if(file.size > MAX_BYTES){ alert("Bild ist zu groß. Maximal 250 KB erlaubt."); e.target.value=""; return; }
+  if(file.size > MAX_BYTES){ alert("Bild ist zu groß. Maximal 1000 KB erlaubt."); e.target.value=""; return; }
   if(!file.type.startsWith("image/")){ alert("Bitte eine Bilddatei auswählen."); e.target.value=""; return; }
   const reader = new FileReader();
   reader.onload = async () => {
@@ -694,5 +694,6 @@ function initAdminDashboard(){
 </script>
 </body>
 </html>
+
 
 
