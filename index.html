@@ -1,107 +1,120 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<title>Login</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Meme-Archiv – mit Admin-Dashboard</title>
 <style>
-body { margin:0; padding:0; font-family:Arial,sans-serif; text-align:center; background:#f4f4f9; transition: background 0.5s, color 0.5s, font-size 0.5s; font-size:16px; }
-body.dark-mode { background:#121212; color:#f4f4f9; }
-body.login-active { 
-    background: url("F5F8ED3D-F090-4910-B284-13037EF00854.png") no-repeat center center fixed; 
-    background-size: cover; 
-    overflow-x:hidden; 
-    transition: background 0.5s;
-}
-body.login-active::before { content:""; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:0; }
-#main-title { font-size:26px; font-weight:bold; color:#fff; margin-top:60px; margin-bottom:20px; position:relative; z-index:1; }
-#login-box { width:350px; margin:20px auto 120px auto; padding:30px; background:white; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.2); text-align:center; transition: transform 0.7s ease, opacity 0.7s ease, background 0.5s, color 0.5s; position:relative; z-index:1; }
-#login-box.hiding { transform: translateY(-200px); opacity:0; }
-#login-box.dark-mode { background:#1e1e1e; color:#f4f4f9; border:1px solid #333; }
-#login-box.dark-mode input { background:#333; color:#f4f4f9; border:1px solid #555; }
-#login-box.dark-mode button, #login-box.dark-mode a.donate-btn { background:#007bff; color:white; }
-input { width:90%; padding:12px; font-size:16px; border:1px solid #ccc; border-radius:8px; margin-bottom:15px; }
-button, a.donate-btn { width:95%; padding:12px; font-size:16px; cursor:pointer; margin-top:10px; border:none; border-radius:8px; text-decoration:none; display:inline-block; }
-button { background:#007bff; color:white; }
-a.donate-btn { background:#ffc439; color:black; font-weight:bold; }
-#error { color:red; margin-top:10px; }
-#content { display:none; padding:40px; position:relative; }
-.content.dark-mode { background:#121212; }
-#buttons-container { display:none; text-align:center; margin-bottom:20px; }
-#logout-btn { font-size:18px; font-weight:bold; cursor:pointer; padding:10px 15px; border-radius:8px; background: #dc3545; color:white; margin-right:10px; }
-#logout-btn:hover { background:#b52a36; }
-#upload-btn { font-size:18px; font-weight:bold; cursor:pointer; padding:10px 15px; border-radius:8px; background:#28a745; color:white; }
-#upload-btn:hover { background:#1e7e34; }
-#logout-notification { display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#28a745; color:white; padding:20px 30px; border-radius:12px; font-size:18px; z-index:2000; box-shadow:0 4px 20px rgba(0,0,0,0.3); text-align:center; transition: opacity 0.5s; }
-#logout-notification.dark-mode { background:#444; }
-.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; justify-items: center; align-items: center; }
-.gallery img {
-    width:100%;
-    height:auto;
-    object-fit:cover;
-    border-radius:8px;
-    transition: transform 0.3s;
-    cursor:pointer;
-}
-.gallery img.hover-effect:hover { transform: scale(1.05); }
-#cookie-banner { position:fixed; bottom:0; left:0; right:0; background:rgba(0,0,0,0.9); color:white; padding:15px; text-align:center; display:none; z-index:1000; }
-#cookie-banner button { background:#28a745; color:white; margin-left:10px; border-radius:5px; padding:8px 16px; border:none; cursor:pointer; }
-#settings-btn { position:fixed; top:20px; right:20px; font-size:28px; cursor:pointer; z-index:1001; }
-#settings-popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:400px; max-width:90%; background:white; padding:40px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.3); z-index:1002; }
-#settings-popup.dark-mode { background:#222; color:#f4f4f9; }
-#settings-popup h3 { margin-top:0; }
-#settings-popup label { display:block; margin:15px 0; font-size:16px; }
-#settings-popup button.close-popup { margin-top:15px; background:#007bff; color:white; }
-#lightbox {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9);
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 1000;
-}
-#lightbox.dark-mode { background:#222; }
-#lightbox img { max-width:80%; max-height:80%; margin-bottom:15px; }
-#lightbox button { position:absolute; top:20px; right:20px; font-size:28px; color:white; background:none; border:none; cursor:pointer; }
-#random-btn-container { text-align:center; margin-top:20px; display:none; }
-#random-btn-container button { padding:12px 24px; font-size:16px; border-radius:8px; border:none; background:#28a745; color:white; cursor:pointer; }
-#random-btn-container.dark-mode button { background:#555; color:white; }
-@media (max-width: 600px) { .gallery { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:10px; } }
+  :root { --primary:#007bff; --danger:#dc3545; --success:#28a745; --warning:#ffc107; --bg:#f4f4f9; --dark:#121212; }
+  *{box-sizing:border-box}
+  body { margin:0; padding:0; font-family:Arial,sans-serif; text-align:center; background:var(--bg); transition: background .5s,color .5s,font-size .5s; font-size:16px; }
+  body.dark-mode { background:var(--dark); color:#f4f4f9; }
+  body.login-active { background:url("F5F8ED3D-F090-4910-B284-13037EF00854.png") no-repeat center/cover fixed; overflow-x:hidden; transition:background .5s; }
+  body.login-active::before { content:""; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:0; }
+  #main-title { font-size:26px; font-weight:bold; color:#fff; margin:60px 0 20px; position:relative; z-index:1; }
+  #login-box { width:350px; margin:20px auto 120px; padding:30px; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.2); position:relative; z-index:1; }
+  #login-box.dark-mode { background:#1e1e1e; color:#f4f4f9; border:1px solid #333; }
+  #login-box.dark-mode input { background:#333; color:#f4f4f9; border:1px solid #555; }
+  #login-box.dark-mode button, #login-box.dark-mode a.donate-btn { background:var(--primary); color:#fff; }
+  input { width:90%; padding:12px; font-size:16px; border:1px solid #ccc; border-radius:8px; margin-bottom:15px; }
+  button, a.donate-btn { width:95%; padding:12px; font-size:16px; cursor:pointer; margin-top:10px; border:none; border-radius:8px; text-decoration:none; display:inline-block; }
+  button { background:var(--primary); color:#fff; }
+  a.donate-btn { background:#ffc439; color:#000; font-weight:bold; }
+  #error { color:red; margin-top:10px; min-height:22px; }
+  #content { display:none; padding:40px; position:relative; }
+  #buttons-container { display:none; text-align:left; margin:0 0 20px; padding:0 40px; }
+  #logout-btn { font-size:14px; font-weight:bold; padding:10px 14px; border-radius:8px; background:var(--danger); color:#fff; margin-right:10px; }
+  #upload-btn { font-size:14px; font-weight:bold; padding:10px 14px; border-radius:8px; background:var(--success); color:#fff; }
+  .gallery { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; justify-items:center; align-items:center; padding:0 40px; }
+  .gallery img { width:100%; height:auto; object-fit:cover; border-radius:8px; transition:transform .3s; cursor:pointer; }
+  .gallery img.hover-effect:hover { transform:scale(1.05); }
+  #cookie-banner { position:fixed; bottom:0; left:0; right:0; background:rgba(0,0,0,.9); color:#fff; padding:15px; display:none; z-index:1000; }
+  #cookie-banner button { background:var(--success); color:#fff; margin-left:10px; border-radius:5px; padding:8px 16px; border:none; cursor:pointer; }
+  #settings-btn { position:fixed; top:20px; right:20px; font-size:28px; cursor:pointer; z-index:1001; }
+  #settings-popup { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:400px; max-width:90%; background:#fff; padding:40px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.3); z-index:1002; }
+  #settings-popup.dark-mode { background:#222; color:#f4f4f9; }
+  #settings-popup h3 { margin-top:0; }
+  #settings-popup label { display:block; margin:15px 0; font-size:16px; }
+  #settings-popup .close-popup { margin-top:15px; background:var(--primary); color:#fff; }
+  #lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,.9); justify-content:center; align-items:center; flex-direction:column; z-index:1000; }
+  #lightbox.dark-mode { background:#222; }
+  #lightbox img { max-width:80%; max-height:80%; margin-bottom:15px; }
+  #lightbox button { position:absolute; top:20px; right:20px; font-size:28px; color:#fff; background:none; border:none; cursor:pointer; }
+  #random-btn-container { text-align:center; margin-top:20px; display:none; }
+  #random-btn-container button { padding:12px 24px; font-size:16px; border-radius:8px; border:none; background:var(--success); color:#fff; cursor:pointer; }
+  #logout-notification { display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:var(--success); color:#fff; padding:20px 30px; border-radius:12px; font-size:18px; z-index:2000; box-shadow:0 4px 20px rgba(0,0,0,.3); transition:opacity .5s; }
+  #announcement-banner { display:none; position:sticky; top:0; left:0; right:0; z-index:1500; background:#c62828; color:#fff; padding:10px 16px; font-weight:bold; text-align:center; }
+  #maintenance-overlay { display:none; position:fixed; inset:0; background:#fff; color:#111; z-index:1400; align-items:center; justify-content:center; padding:40px; }
+  body.dark-mode #maintenance-overlay { background:#111; color:#fff; }
+
+  /* ===== Admin Dashboard ===== */
+  #admin-dashboard { display:none; text-align:left; padding:20px 20px 60px; max-width:1100px; margin:0 auto; }
+  .admin-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:10px 0 20px; }
+  .admin-title { font-size:24px; font-weight:700; }
+  .tabs { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+  .tab-btn { padding:10px 12px; border-radius:10px; border:1px solid #ccc; background:#fff; cursor:pointer; font-weight:700; }
+  body.dark-mode .tab-btn { background:#1e1e1e; color:#f4f4f9; border-color:#333; }
+  .tab-btn.active { border-color:var(--primary); outline:2px solid var(--primary); }
+  .tab { display:none; background:#fff; border:1px solid #e5e5e5; border-radius:12px; padding:16px; }
+  body.dark-mode .tab { background:#1e1e1e; border-color:#333; }
+  .table { width:100%; border-collapse:collapse; }
+  .table th, .table td { text-align:left; padding:8px 10px; border-bottom:1px solid #eee; }
+  body.dark-mode .table th, body.dark-mode .table td { border-bottom:1px solid #333; }
+  .row-actions button { margin-right:6px; padding:6px 10px; border-radius:8px; font-size:12px; }
+  .btn-danger { background:var(--danger); color:#fff; }
+  .btn-secondary { background:#6c757d; color:#fff; }
+  .btn-success { background:var(--success); color:#fff; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+  .card { background:#fff; border:1px solid #eee; border-radius:12px; padding:14px; }
+  body.dark-mode .card { background:#1e1e1e; border-color:#333; }
+  .stat-value { font-size:28px; font-weight:800; margin-top:4px; }
+  .form-row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .form-row input[type="text"], .form-row textarea { flex:1; padding:10px; border:1px solid #ccc; border-radius:10px; }
+  body.dark-mode .form-row input, body.dark-mode .form-row textarea { background:#2b2b2b; color:#fff; border-color:#444; }
+
+  @media (max-width: 600px) {
+    .gallery { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap:10px; padding:0 12px; }
+    #buttons-container { padding:0 12px; }
+  }
 </style>
 </head>
 <body class="login-active">
 
-<div id="main-title">Erhalte Zugriff auf das grösste Meme-Archiv der Schweiz</div>
+<!-- Global Banner & Maintenance -->
+<div id="announcement-banner"></div>
+<div id="maintenance-overlay"><h2>🚧 Wartungsarbeiten</h2><p>Die Website ist aktuell wegen Wartungsarbeiten nicht verfügbar. Bitte versuche es später erneut.</p></div>
 
+<!-- Login -->
+<div id="main-title">Erhalte Zugriff auf das grösste Meme-Archiv der Schweiz</div>
 <div id="login-box">
-<h2>Willkommen</h2>
-<p>Bitte E-Mail und Passwort eingeben:</p>
-<input type="email" id="email" placeholder="E-Mail"><br>
-<input type="password" id="password" placeholder="Passwort"><br>
-<button id="login-btn">Login</button>
-<button id="register-btn">Registrieren</button>
-<p id="error"></p>
-<div id="or-text">oder</div>
-<a href="https://www.paypal.com/paypalme/jxridaehler@gmail.com" class="donate-btn" target="_blank">Spenden</a>
+  <h2>Willkommen</h2>
+  <p>Bitte E-Mail und Passwort eingeben:</p>
+  <input type="email" id="email" placeholder="E-Mail"><br>
+  <input type="password" id="password" placeholder="Passwort"><br>
+  <button id="login-btn">Login</button>
+  <button id="register-btn">Registrieren</button>
+  <p id="error"></p>
+  <div id="or-text">oder</div>
+  <a href="https://www.paypal.com/paypalme/jxridaehler@gmail.com" class="donate-btn" target="_blank">Spenden</a>
 </div>
 
+<!-- Settings -->
 <div id="settings-btn">⚙️</div>
 <div id="settings-popup">
-<h3>Einstellungen</h3>
-<label><input type="checkbox" id="dark-mode-toggle"> Dark Mode </label>
-<label>Schriftgröße:
-<select id="font-size-select">
-<option value="small">Klein</option>
-<option value="medium" selected>Mittel</option>
-<option value="large">Groß</option>
-</select>
-</label>
-<label><input type="checkbox" id="animation-toggle" checked> Animationen </label>
-<button class="close-popup" onclick="closeSettings()">Schließen</button>
+  <h3>Einstellungen</h3>
+  <label><input type="checkbox" id="dark-mode-toggle"> Dark Mode </label>
+  <label>Schriftgröße:
+    <select id="font-size-select">
+      <option value="small">Klein</option>
+      <option value="medium" selected>Mittel</option>
+      <option value="large">Groß</option>
+    </select>
+  </label>
+  <label><input type="checkbox" id="animation-toggle" checked> Animationen </label>
+  <button class="close-popup" onclick="closeSettings()">Schließen</button>
 </div>
 
+<!-- ===== User Content (Galerie) ===== -->
 <div id="content">
   <div id="buttons-container">
     <button id="logout-btn">⬅️ Logout</button>
@@ -109,8 +122,8 @@ a.donate-btn { background:#ffc439; color:black; font-weight:bold; }
     <input type="file" id="file-input" accept="image/*" style="display:none;">
   </div>
 
-  <div class="gallery">
-    <!-- Bilder werden dynamisch aus Firestore geladen -->
+  <div class="gallery" id="gallery">
+    <!-- Statische Beispielbilder (optional) -->
     <img src="vik.jpg" alt="vik">
     <img src="jp.png" alt="jp">
     <img src="actrually.webp" alt="actrually">
@@ -202,29 +215,90 @@ a.donate-btn { background:#ffc439; color:black; font-weight:bold; }
     <img src="silver.jpg" alt="silver">
   </div>
 
-  <div id="random-btn-container">
-    <button id="random-btn-page">Zufälliges Meme</button>
+  <div id="random-btn-container"><button id="random-btn-page">Zufälliges Meme</button></div>
+</div>
+
+<!-- ===== Admin Dashboard ===== -->
+<div id="admin-dashboard">
+  <div class="admin-header">
+    <div class="admin-title">🔐 Admin-Dashboard</div>
+    <div class="form-row" style="justify-content:flex-end;gap:6px">
+      <button id="admin-logout" class="btn-secondary">Logout</button>
+      <span class="note" id="admin-email" style="opacity:.8"></span>
+    </div>
+  </div>
+
+  <div class="tabs" id="admin-tabs">
+    <button class="tab-btn active" data-tab="tab-images">📷 Bilderverwaltung</button>
+    <button class="tab-btn" data-tab="tab-users">👤 Userverwaltung</button>
+    <button class="tab-btn" data-tab="tab-stats">📊 Statistik</button>
+    <button class="tab-btn" data-tab="tab-logs">📜 User-Logs</button>
+    <button class="tab-btn" data-tab="tab-maint">🛠️ Wartungsmodus</button>
+    <button class="tab-btn" data-tab="tab-announce">📢 Benachrichtigung</button>
+  </div>
+
+  <div id="tab-images" class="tab" style="display:block">
+    <div class="note">Liste aller Firestore-Memes. Du kannst sie öffnen oder löschen.</div>
+    <table class="table" id="images-table">
+      <thead><tr><th>Name</th><th>Uploader</th><th>Typ</th><th>Größe</th><th>Zeit</th><th>Aktionen</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="tab-users" class="tab">
+    <div class="note">Client-seitige Userverwaltung über Collection <code>users</code>.</div>
+    <table class="table" id="users-table">
+      <thead><tr><th>Email</th><th>UID</th><th>Rolle</th><th>Gesperrt</th><th>Aktionen</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="tab-stats" class="tab">
+    <div class="grid">
+      <div class="card"><div>Registrierte User</div><div class="stat-value" id="stat-users">–</div></div>
+      <div class="card"><div>Hochgeladene Bilder</div><div class="stat-value" id="stat-memes">–</div></div>
+      <div class="card"><div>Logins (gesamt)</div><div class="stat-value" id="stat-logs">–</div></div>
+    </div>
+  </div>
+
+  <div id="tab-logs" class="tab">
+    <table class="table" id="logs-table">
+      <thead><tr><th>Zeit</th><th>Email</th><th>UID</th><th>User-Agent</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="tab-maint" class="tab">
+    <div class="form-row">
+      <label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="maintenance-toggle"> Wartungsmodus aktiv</label>
+      <span class="note">Wenn aktiv, sehen Nicht-Admins nur die Wartungsseite.</span>
+    </div>
+  </div>
+
+  <div id="tab-announce" class="tab">
+    <div class="form-row">
+      <textarea id="announcement-text" rows="3" placeholder="Dein Banner-Text… z. B. ⚠️ Heute kein Upload möglich!"></textarea>
+    </div>
+    <div class="form-row" style="justify-content:flex-end">
+      <button id="save-announcement" class="btn-success">Banner speichern</button>
+      <button id="clear-announcement" class="btn-secondary">Banner löschen</button>
+    </div>
+    <div class="note">Der Text erscheint als roter Banner oben für alle User.</div>
   </div>
 </div>
 
-<div id="lightbox">
-  <img src="" alt="Meme">
-  <button id="lightbox-close">✖</button>
-</div>
-
-<div id="cookie-banner">
-  Diese Website verwendet Cookies, um dein Erlebnis zu verbessern.
-  <button onclick="acceptCookies()">Akzeptieren</button>
-</div>
-
+<!-- Lightbox, Cookies, Logout-Nachricht -->
+<div id="lightbox"><img src="" alt="Meme"><button id="lightbox-close">✖</button></div>
+<div id="cookie-banner">Diese Website verwendet Cookies, um dein Erlebnis zu verbessern. <button onclick="acceptCookies()">Akzeptieren</button></div>
 <div id="logout-notification">Du wurdest erfolgreich ausgeloggt!</div>
 
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-// Firebase Init
+// ================= Firebase Init =================
 const firebaseConfig = {
   apiKey: "AIzaSyCquaWxIaakG_KH3gdULBWQ5AqnOlcNWkk",
   authDomain: "backend-website-825cd.firebaseapp.com",
@@ -238,65 +312,34 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// ======= Immer auf Login starten =======
+// Start immer auf Login
 window.onload = () => { auth.signOut(); };
 
-// ======= Dark Mode =======
+// ================= Settings =================
 const darkModeToggle = document.getElementById("dark-mode-toggle");
 if(localStorage.getItem("darkMode") === "true") document.body.classList.add("dark-mode");
-darkModeToggle.checked = document.body.classList.contains("dark-mode");
+if(darkModeToggle){ darkModeToggle.checked = document.body.classList.contains("dark-mode");
 darkModeToggle.onchange = () => {
-    document.body.classList.toggle("dark-mode");
-    document.getElementById("login-box").classList.toggle("dark-mode");
-    document.getElementById("content").classList.toggle("dark-mode");
-    document.getElementById("logout-notification").classList.toggle("dark-mode");
-    document.getElementById("settings-popup").classList.toggle("dark-mode");
-    document.getElementById("random-btn-container").classList.toggle("dark-mode");
-    localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
-};
-
-// ======= Settings Popup =======
+  document.body.classList.toggle("dark-mode");
+  document.getElementById("login-box").classList.toggle("dark-mode");
+  document.getElementById("settings-popup").classList.toggle("dark-mode");
+  localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+};}
 const settingsBtn = document.getElementById("settings-btn");
 const settingsPopup = document.getElementById("settings-popup");
 function closeSettings(){ settingsPopup.style.display="none"; }
 settingsBtn.onclick = () => { settingsPopup.style.display="block"; };
 
-// ======= Animation Toggle =======
 const animationToggle = document.getElementById("animation-toggle");
-function updateAnimations() {
-  const images = document.querySelectorAll(".gallery img");
-  const lightbox = document.getElementById("lightbox");
-  if(animationToggle.checked){
-    images.forEach(img => img.classList.add("hover-effect"));
-    lightbox.dataset.enabled = "true";
-  } else {
-    images.forEach(img => img.classList.remove("hover-effect"));
-    lightbox.dataset.enabled = "false";
-  }
-  localStorage.setItem("animations", animationToggle.checked);
-}
-if(localStorage.getItem("animations") === "false") animationToggle.checked = false;
-updateAnimations();
-animationToggle.onchange = updateAnimations;
+function updateAnimations(){ const images=document.querySelectorAll(".gallery img"); const lightbox=document.getElementById("lightbox"); if(animationToggle.checked){ images.forEach(i=>i.classList.add("hover-effect")); lightbox.dataset.enabled="true";} else { images.forEach(i=>i.classList.remove("hover-effect")); lightbox.dataset.enabled="false";} localStorage.setItem("animations", animationToggle.checked); }
+if(localStorage.getItem("animations") === "false") animationToggle.checked=false; updateAnimations(); animationToggle.onchange = updateAnimations;
 
-// ======= Schriftgröße =======
 const fontSizeSelect = document.getElementById("font-size-select");
-function updateFontSize() {
-  const size = fontSizeSelect.value;
-  let scale = 1;
-  if(size === "small") scale = 0.5;
-  if(size === "medium") scale = 1;
-  if(size === "large") scale = 2;
-  document.body.style.fontSize = (16 * scale) + "px";
-  localStorage.setItem("fontSize", size);
-}
-if(localStorage.getItem("fontSize")){
-  fontSizeSelect.value = localStorage.getItem("fontSize");
-}
-updateFontSize();
-fontSizeSelect.onchange = updateFontSize;
+function updateFontSize(){ const size=fontSizeSelect.value; let scale=1; if(size==="small") scale=.5; if(size==="medium") scale=1; if(size==="large") scale=2; document.body.style.fontSize=(16*scale)+"px"; localStorage.setItem("fontSize", size);} if(localStorage.getItem("fontSize")){ fontSizeSelect.value=localStorage.getItem("fontSize"); } updateFontSize(); fontSizeSelect.onchange=updateFontSize;
 
-// ======= UI Helpers =======
+// ================= UI Helpers =================
+const announcementBanner = document.getElementById('announcement-banner');
+const maintenanceOverlay = document.getElementById('maintenance-overlay');
 function showAppUI(){
   document.getElementById("login-box").style.display="none";
   document.getElementById("main-title").style.display="none";
@@ -304,6 +347,7 @@ function showAppUI(){
   document.getElementById("content").style.display="block";
   document.getElementById("buttons-container").style.display="block";
   document.getElementById("random-btn-container").style.display="block";
+  document.getElementById("admin-dashboard").style.display="none";
 }
 function showLoginUI(){
   document.getElementById("login-box").style.display="block";
@@ -312,80 +356,59 @@ function showLoginUI(){
   document.getElementById("content").style.display="none";
   document.getElementById("buttons-container").style.display="none";
   document.getElementById("random-btn-container").style.display="none";
+  document.getElementById("admin-dashboard").style.display="none";
+}
+function showAdminUI(){
+  document.getElementById("login-box").style.display="none";
+  document.getElementById("main-title").style.display="none";
+  document.body.classList.remove("login-active");
+  document.getElementById("content").style.display="none";
+  document.getElementById("buttons-container").style.display="none";
+  document.getElementById("random-btn-container").style.display="none";
+  document.getElementById("admin-dashboard").style.display="block";
 }
 
-// ======= Auth: Login & Registrierung =======
-document.getElementById("login-btn").onclick = () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  auth.signInWithEmailAndPassword(email,password)
-      .catch(e=>document.getElementById("error").textContent=e.message);
-};
-document.getElementById("register-btn").onclick = () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  auth.createUserWithEmailAndPassword(email,password)
-      .then(()=>alert("Registrierung erfolgreich! Bitte einloggen."))
-      .catch(e=>document.getElementById("error").textContent=e.message);
-};
+// Cookies
+function acceptCookies(){ document.getElementById("cookie-banner").style.display="none"; setCookie("acceptedCookies","true",365);}
+function setCookie(name,value,days){ const d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/";}
+if(!document.cookie.includes("acceptedCookies=true")) document.getElementById("cookie-banner").style.display="block";
 
-// ======= Auth: Logout mit Notification =======
-document.getElementById("logout-btn").onclick = () => {
-  auth.signOut().then(()=>{
-    const notif = document.getElementById("logout-notification");
-    notif.style.opacity = "1";
-    notif.style.display = "block"; // Banner einblenden
-    setTimeout(()=>{
-      notif.style.opacity = "0"; // langsam ausblenden
-      setTimeout(()=>showLoginUI(), 500); // Login anzeigen nach fadeout
-    }, 2000);
-  });
-};
+// Lightbox + Random
+const lightbox = document.getElementById("lightbox"), lightboxImg = lightbox.querySelector("img");
+document.getElementById("gallery").addEventListener("click", e => { if(e.target.tagName==="IMG" && animationToggle.checked){ lightboxImg.src = e.target.src; lightbox.style.display = "flex"; }});
+document.getElementById("lightbox-close").onclick = () => { lightbox.style.display="none"; };
+lightbox.addEventListener("click", e => { if(e.target === lightbox) lightbox.style.display="none"; });
+document.getElementById("random-btn-page").onclick = () => { const images = document.querySelectorAll(".gallery img"); if(images.length===0 || !animationToggle.checked) return; const rand = Math.floor(Math.random()*images.length); lightboxImg.src = images[rand].src; lightbox.style.display="flex"; };
 
-// ======= Firestore: Galerie =======
-function addImageToGallery(src){
-  const gallery = document.querySelector(".gallery");
-  const img = document.createElement("img");
-  img.src = src;
-  if(animationToggle.checked) img.classList.add("hover-effect");
-  gallery.appendChild(img);
-}
-
+// ================= Firestore: Galerie (User-Seite) =================
+function addImageToGallery(src){ const gallery=document.querySelector(".gallery"); const img=document.createElement("img"); img.src=src; if(animationToggle.checked) img.classList.add("hover-effect"); gallery.appendChild(img); }
 let memesUnsub = null;
 function startMemesListener(){
-  if (memesUnsub) return;
-  memesUnsub = db.collection("memes")
-    .orderBy("timestamp")
-    .onSnapshot(snapshot => {
-      snapshot.docChanges().forEach(change => {
-        if(change.type === "added"){
-          const data = change.doc.data();
-          const src = data.dataUrl || data.url;
-          if (src) addImageToGallery(src);
-        }
-      });
+  if(memesUnsub) return;
+  memesUnsub = db.collection("memes").orderBy("timestamp","asc").onSnapshot(snap=>{
+    snap.docChanges().forEach(change=>{
+      if(change.type==="added"){
+        const data=change.doc.data();
+        const src=data.dataUrl || data.url;
+        if(src) addImageToGallery(src);
+      }
     });
+  });
 }
 
-// ======= Upload =======
+// ================= Upload =================
+const MAX_BYTES = 250*1024;
 document.getElementById("upload-btn").onclick = () => document.getElementById("file-input").click();
 document.getElementById("file-input").onchange = async (e) => {
-  const file = e.target.files[0]; 
-  if(!file) return;
-
-  const MAX_BYTES = 250 * 1024;
-  if (file.size > MAX_BYTES) { alert("Bild ist zu groß. Maximal 250 KB erlaubt."); e.target.value=""; return; }
-  if (!file.type.startsWith("image/")) { alert("Bitte eine Bilddatei auswählen."); e.target.value=""; return; }
-
+  const file = e.target.files[0]; if(!file) return;
+  if(file.size > MAX_BYTES){ alert("Bild ist zu groß. Maximal 250 KB erlaubt."); e.target.value=""; return; }
+  if(!file.type.startsWith("image/")){ alert("Bitte eine Bilddatei auswählen."); e.target.value=""; return; }
   const reader = new FileReader();
   reader.onload = async () => {
     try {
       const dataUrl = reader.result;
       await db.collection("memes").add({
-        dataUrl: dataUrl,
-        name: file.name,
-        type: file.type,
-        size: file.size,
+        dataUrl, name:file.name, type:file.type, size:file.size,
         uid: auth.currentUser ? auth.currentUser.uid : null,
         timestamp: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -395,42 +418,210 @@ document.getElementById("file-input").onchange = async (e) => {
   reader.readAsDataURL(file);
 };
 
-// ======= Lightbox =======
-const lightbox = document.getElementById("lightbox");
-const lightboxImg = lightbox.querySelector("img");
-document.querySelector(".gallery").addEventListener("click", e => {
-  if(e.target.tagName === "IMG" && animationToggle.checked){
-    lightboxImg.src = e.target.src;
-    lightbox.style.display = "flex";
-  }
-});
-document.getElementById("lightbox-close").onclick = () => { lightbox.style.display="none"; };
-lightbox.addEventListener("click", e => { if(e.target === lightbox) lightbox.style.display="none"; });
+// ================= Auth =================
+const loginBtn = document.getElementById('login-btn');
+const registerBtn = document.getElementById('register-btn');
+const errorBox = document.getElementById('error');
 
-// ======= Cookie Banner =======
-function acceptCookies(){ document.getElementById("cookie-banner").style.display="none"; setCookie("acceptedCookies","true",365);}
-function setCookie(name,value,days){ const d=new Date(); d.setTime(d.getTime()+(days*24*60*60*1000)); document.cookie=name+"="+value+";expires="+d.toUTCString()+";path=/";}
-if(!document.cookie.includes("acceptedCookies=true")) document.getElementById("cookie-banner").style.display="block";
-
-// ======= Random Meme =======
-document.getElementById("random-btn-page").onclick = () => {
-  const images = document.querySelectorAll(".gallery img");
-  if(images.length===0 || !animationToggle.checked) return;
-  const rand = Math.floor(Math.random()*images.length);
-  lightbox.querySelector("img").src = images[rand].src;
-  lightbox.style.display="flex";
+loginBtn.onclick = async () => {
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+  try {
+    const cred = await auth.signInWithEmailAndPassword(email,password);
+    await afterLoginSetup(cred.user);
+  } catch(e){ errorBox.textContent=e.message; }
 };
 
-// ======= Auth-Status beobachten =======
-auth.onAuthStateChanged(user => {
-  if (user) {
-    showAppUI();
-    startMemesListener();
+registerBtn.onclick = async () => {
+  const email=document.getElementById("email").value.trim();
+  const password=document.getElementById("password").value;
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email,password);
+    await db.collection('users').doc(cred.user.uid).set({
+      uid: cred.user.uid, email, disabled:false, role:'user',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    alert("Registrierung erfolgreich! Bitte einloggen.");
+  } catch(e){ errorBox.textContent=e.message; }
+};
+
+document.getElementById('logout-btn').onclick = () => doLogout();
+document.getElementById('admin-logout').onclick = () => doLogout();
+async function doLogout(){
+  await auth.signOut();
+  const notif=document.getElementById("logout-notification");
+  notif.style.opacity="1"; notif.style.display="block";
+  setTimeout(()=>{ notif.style.opacity="0"; setTimeout(()=>showLoginUI(),500); }, 1500);
+}
+
+async function afterLoginSetup(user){
+  try { await db.collection('logs').add({ uid:user.uid, email:user.email||null, ua:navigator.userAgent, ts: firebase.firestore.FieldValue.serverTimestamp() }); } catch(_){}
+  const uref = db.collection('users').doc(user.uid);
+  const usnap = await uref.get();
+  if(!usnap.exists){
+    await uref.set({ uid:user.uid, email:user.email||null, disabled:false, role:(user.email==='admin@x.ch'?'admin':'user'), createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+  }
+  const u = (await uref.get()).data();
+  if(u && u.disabled){ await auth.signOut(); errorBox.textContent='Dein Account ist gesperrt. Bitte kontaktiere den Admin.'; return; }
+}
+
+// Global Config listeners
+let isAdmin = false;
+let cfgMaintUnsub = null, cfgAnnUnsub = null;
+
+function listenConfig(){
+  if(cfgMaintUnsub) cfgMaintUnsub();
+  cfgMaintUnsub = db.collection('config').doc('maintenance').onSnapshot(doc=>{
+    const active = doc.exists && doc.data().active === true;
+    maintenanceOverlay.style.display = (active && !isAdmin) ? 'flex' : 'none';
+  });
+  if(cfgAnnUnsub) cfgAnnUnsub();
+  cfgAnnUnsub = db.collection('config').doc('announcement').onSnapshot(doc=>{
+    const text = doc.exists ? (doc.data().text || '') : '';
+    if(text && text.trim().length>0){ announcementBanner.textContent = text; announcementBanner.style.display='block'; }
+    else { announcementBanner.textContent=''; announcementBanner.style.display='none'; }
+    const textarea = document.getElementById('announcement-text');
+    if(textarea) textarea.value = text || '';
+  });
+}
+
+auth.onAuthStateChanged(async (user)=>{
+  if(user){
+    isAdmin = (user.email === 'admin@x.ch');
+    document.getElementById('admin-email').textContent = user.email || '';
+    listenConfig();
+    if(isAdmin){
+      showAdminUI();
+      initAdminDashboard();
+    } else {
+      showAppUI();
+      startMemesListener();
+    }
   } else {
+    isAdmin = false;
+    if(cfgMaintUnsub){ cfgMaintUnsub(); cfgMaintUnsub=null; }
+    if(cfgAnnUnsub){ cfgAnnUnsub(); cfgAnnUnsub=null; }
     showLoginUI();
     if (memesUnsub) { memesUnsub(); memesUnsub=null; }
   }
 });
+
+// ================= Admin Dashboard =================
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).style.display='block';
+  });
+});
+
+let adminMemesUnsub=null, adminUsersUnsub=null, adminLogsUnsub=null;
+
+function initAdminDashboard(){
+  // Bilderliste
+  if(adminMemesUnsub) adminMemesUnsub();
+  const tbody = document.querySelector('#images-table tbody');
+  tbody.innerHTML='';
+  adminMemesUnsub = db.collection('memes').orderBy('timestamp','desc').onSnapshot(snap=>{
+    tbody.innerHTML='';
+    snap.forEach(doc=>{
+      const d = doc.data();
+      const ts = d.timestamp && d.timestamp.toDate ? d.timestamp.toDate().toLocaleString() : '';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${d.name || '(ohne Name)'}</td>
+        <td>${d.uid || ''}</td>
+        <td>${d.type || ''}</td>
+        <td>${(d.size?Math.round(d.size/1024):'-')} KB</td>
+        <td>${ts}</td>
+        <td class="row-actions">
+          <button class="btn-secondary" data-open="${doc.id}">Öffnen</button>
+          <button class="btn-danger" data-del="${doc.id}">Löschen</button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  });
+  tbody.addEventListener('click', async (e)=>{
+    const idOpen = e.target.getAttribute('data-open');
+    const idDel = e.target.getAttribute('data-del');
+    if(idOpen){
+      const doc = await db.collection('memes').doc(idOpen).get();
+      const d=doc.data(); const url=d.dataUrl || d.url;
+      if(url){ window.open(url, '_blank'); }
+    }
+    if(idDel){
+      if(confirm('Dieses Bild wirklich löschen?')){
+        await db.collection('memes').doc(idDel).delete().catch(console.error);
+      }
+    }
+  });
+
+  // Userverwaltung
+  if(adminUsersUnsub) adminUsersUnsub();
+  const utbody = document.querySelector('#users-table tbody');
+  utbody.innerHTML='';
+  adminUsersUnsub = db.collection('users').orderBy('createdAt','desc').onSnapshot(snap=>{
+    utbody.innerHTML='';
+    snap.forEach(doc=>{
+      const u = doc.data();
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${u.email || ''}</td>
+        <td style="font-family:monospace">${u.uid || ''}</td>
+        <td>${u.role || 'user'}</td>
+        <td>${u.disabled? 'ja':'nein'}</td>
+        <td>
+          <button class="btn-secondary" data-toggle="${u.uid}" data-state="${u.disabled? 'enable':'disable'}">${u.disabled? 'Entsperren':'Sperren'}</button>
+        </td>`;
+      utbody.appendChild(tr);
+    });
+  });
+  utbody.addEventListener('click', async (e)=>{
+    const uid = e.target.getAttribute('data-toggle');
+    if(!uid) return;
+    const state = e.target.getAttribute('data-state');
+    const toDisable = (state==='disable');
+    if(uid === auth.currentUser.uid){ alert('Du kannst dich nicht selbst sperren.'); return; }
+    await db.collection('users').doc(uid).set({ disabled: toDisable }, { merge:true });
+  });
+
+  // Logs
+  if(adminLogsUnsub) adminLogsUnsub();
+  const ltbody = document.querySelector('#logs-table tbody');
+  ltbody.innerHTML='';
+  adminLogsUnsub = db.collection('logs').orderBy('ts','desc').limit(200).onSnapshot(snap=>{
+    ltbody.innerHTML='';
+    snap.forEach(doc=>{
+      const l = doc.data();
+      const ts = l.ts && l.ts.toDate ? l.ts.toDate().toLocaleString() : '';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${ts}</td><td>${l.email||''}</td><td style="font-family:monospace">${l.uid||''}</td><td>${(l.ua||'').slice(0,80)}</td>`;
+      ltbody.appendChild(tr);
+    });
+  });
+
+  // Statistik (live)
+  db.collection('users').onSnapshot(s=>{ document.getElementById('stat-users').textContent = s.size; });
+  db.collection('memes').onSnapshot(s=>{ document.getElementById('stat-memes').textContent = s.size; });
+  db.collection('logs').onSnapshot(s=>{ document.getElementById('stat-logs').textContent = s.size; });
+
+  // Wartungsmodus
+  const maintToggle = document.getElementById('maintenance-toggle');
+  db.collection('config').doc('maintenance').get().then(d=>{ maintToggle.checked = d.exists && d.data().active===true; });
+  maintToggle.onchange = async () => { await db.collection('config').doc('maintenance').set({ active: maintToggle.checked }, { merge:true }); };
+
+  // Announcement
+  document.getElementById('save-announcement').onclick = async ()=>{
+    const text = document.getElementById('announcement-text').value || '';
+    await db.collection('config').doc('announcement').set({ text }, { merge:true });
+    alert('Banner gespeichert.');
+  };
+  document.getElementById('clear-announcement').onclick = async ()=>{
+    await db.collection('config').doc('announcement').set({ text: '' }, { merge:true });
+    alert('Banner gelöscht.');
+  };
+}
 </script>
 </body>
 </html>
